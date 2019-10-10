@@ -8,8 +8,8 @@ class ConfigException(Exception):
 
 class Config:
     def __init__(self, snapshot_first, snapshot_second, show_diff,
-                 output_llvm_ir, control_flow_only, print_asm_diffs,
-                 verbosity, use_ffi, semdiff_tool):
+                 output_llvm_ir, enabled_patterns, disabled_patterns,
+                 print_asm_diffs, verbosity, use_ffi, semdiff_tool):
         """
         Store configuration of DiffKemp
         :param snapshot_first: First snapshot representation.
@@ -23,7 +23,8 @@ class Config:
         self.snapshot_second = snapshot_second
         self.show_diff = show_diff
         self.output_llvm_ir = output_llvm_ir
-        self.control_flow_only = control_flow_only
+        self.enabled_patterns = enabled_patterns
+        self.disabled_patterns = disabled_patterns
         self.print_asm_diffs = print_asm_diffs
         self.verbosity = verbosity
         self.use_ffi = use_ffi
