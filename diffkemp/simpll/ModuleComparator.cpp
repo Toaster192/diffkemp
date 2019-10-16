@@ -18,6 +18,7 @@
 #include "Utils.h"
 #include "passes/FieldAccessFunctionGenerator.h"
 #include "passes/FunctionAbstractionsGenerator.h"
+#include "passes/SimplifyKernelFunctionCallsPass.h"
 #include <llvm/Support/raw_ostream.h>
 #include <llvm/Transforms/Utils/Cloning.h>
 
@@ -160,7 +161,8 @@ void ModuleComparator::compareFunctions(Function *FirstFun,
                     if (!toInline->isIntrinsic()
                         && !isSimpllAbstraction(toInline))
                         missingDefs.first = toInline;
-                } else {
+                } else if (!isKernelSimplifiedFunction(
+                                   InlinedFunFirst->getName())) {
                     InlineFunctionInfo ifi;
                     if (InlineFunction(inlineFirst, ifi, nullptr, false))
                         inlined = true;
@@ -180,7 +182,8 @@ void ModuleComparator::compareFunctions(Function *FirstFun,
                     if (!toInline->isIntrinsic()
                         && !isSimpllAbstraction(toInline))
                         missingDefs.second = toInline;
-                } else {
+                } else if (!isKernelSimplifiedFunction(
+                                   InlinedFunSecond->getName())) {
                     InlineFunctionInfo ifi;
                     if (InlineFunction(inlineSecond, ifi, nullptr, false))
                         inlined = true;

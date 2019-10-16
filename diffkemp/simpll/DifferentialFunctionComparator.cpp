@@ -17,6 +17,7 @@
 #include "SourceCodeUtils.h"
 #include "passes/FieldAccessFunctionGenerator.h"
 #include "passes/FunctionAbstractionsGenerator.h"
+#include "passes/SimplifyKernelFunctionCallsPass.h"
 #include <llvm/IR/GetElementPtrTypeIterator.h>
 #include <llvm/IR/Instructions.h>
 #include <llvm/IR/Intrinsics.h>
@@ -836,7 +837,7 @@ int DifferentialFunctionComparator::cmpGlobalValues(GlobalValue *L,
         if (hasSuffix(NameR))
             NameR = NameR.substr(0, NameR.find_last_of("."));
         if (NameL == NameR
-            || (isPrintFunction(NameL) && isPrintFunction(NameR))) {
+            || (isKernelPrintFunction(NameL) && isKernelPrintFunction(NameR))) {
             if (isa<Function>(L) && isa<Function>(R)) {
                 // Functions compared as being the same have to be also compared
                 // by ModuleComparator.
@@ -845,8 +846,8 @@ int DifferentialFunctionComparator::cmpGlobalValues(GlobalValue *L,
 
                 // Do not compare SimpLL abstractions.
                 if (!isSimpllAbstraction(FunL) && !isSimpllAbstraction(FunR)
-                    && (!isPrintFunction(L->getName())
-                        && !isPrintFunction(R->getName()))) {
+                    && (!isKernelPrintFunction(L->getName())
+                        && !isKernelPrintFunction(R->getName()))) {
                     // Store the called functions into the current
                     // functions' callee set.
                     ModComparator->ComparedFuns.at({FnL, FnR})
