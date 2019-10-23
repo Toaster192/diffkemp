@@ -57,7 +57,7 @@
 void preprocessModule(Module &Mod,
                       Function *Main,
                       GlobalVariable *Var,
-                      bool ControlFlowOnly) {
+                      const Config &Config) {
     if (Var) {
         // Slicing of the program w.r.t. the value of a global variable
         PassManager<Function, FunctionAnalysisManager, GlobalVariable *> fpm;
@@ -75,11 +75,13 @@ void preprocessModule(Module &Mod,
     PassBuilder pb;
     pb.registerFunctionAnalyses(fam);
 
-    if (ControlFlowOnly)
+    if (Config.PatternControlFlowOnly)
         fpm.addPass(ControlFlowSlicer{});
-    fpm.addPass(SimplifyKernelFunctionCallsPass{});
+    if (Config.PatternKernelPrints)
+        fpm.addPass(SimplifyKernelFunctionCallsPass{});
     fpm.addPass(UnifyMemcpyPass{});
-    fpm.addPass(DCEPass{});
+    if (Config.PatternDeadCode)
+        fpm.addPass(DCEPass{});
     fpm.addPass(LowerExpectIntrinsicPass{});
     fpm.addPass(ReduceFunctionMetadataPass{});
     fpm.addPass(SeparateCallsToBitcastPass{});
@@ -145,8 +147,10 @@ void simplifyModulesDiff(Config &config, OverallResult &Result) {
                 Function *,
                 Module *>
             mpm;
-    mpm.addPass(RemoveUnusedReturnValuesPass{});
-    mpm.addPass(FieldAccessFunctionGenerator{});
+    if (config.PatternUnusedReturnTypes)
+        mpm.addPass(RemoveUnusedReturnValuesPass{});
+    if (config.PatternStructAlignment)
+        mpm.addPass(FieldAccessFunctionGenerator{});
     mpm.run(*config.First, mam, config.FirstFun, config.Second.get());
     mpm.run(*config.Second, mam, config.SecondFun, config.First.get());
 
@@ -161,7 +165,8 @@ void simplifyModulesDiff(Config &config, OverallResult &Result) {
                  mam.getResult<CalledFunctionsAnalysis>(*config.First,
                                                         config.FirstFun),
                  mam.getResult<CalledFunctionsAnalysis>(*config.Second,
-                                                        config.SecondFun));
+                                                        config.SecondFun),
+                 config);
 
     // Compare functions for syntactical equivalence
     ModuleComparator modComp(*config.First,
@@ -233,11 +238,11 @@ void processAndCompare(Config &config, OverallResult &Result) {
     preprocessModule(*config.First,
                      config.FirstFun,
                      config.FirstVar,
-                     config.ControlFlowOnly);
+                     config);
     preprocessModule(*config.Second,
                      config.SecondFun,
                      config.SecondVar,
-                     config.ControlFlowOnly);
+                     config);
     config.refreshFunctions();
 
     simplifyModulesDiff(config, Result);

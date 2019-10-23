@@ -71,8 +71,10 @@ Config::Config()
         : First(parseIRFile(FirstFileOpt, err, context_first)),
           Second(parseIRFile(SecondFileOpt, err, context_second)),
           FirstOutFile(FirstFileOpt), SecondOutFile(SecondFileOpt),
-          OutputLlvmIR(OutputLlvmIROpt), ControlFlowOnly(ControlFlowOpt),
-          PrintAsmDiffs(PrintAsmDiffsOpt), PrintCallStacks(PrintCallstacksOpt) {
+          OutputLlvmIR(OutputLlvmIROpt),
+          PatternControlFlowOnly(ControlFlowOpt),
+          PrintAsmDiffs(PrintAsmDiffsOpt),
+          PrintCallStacks(PrintCallstacksOpt) {
     if (!FunctionOpt.empty()) {
         // Parse --fun option - find functions with given names.
         // The option can be either single function name (same for both modules)
@@ -152,7 +154,7 @@ Config::Config(std::string FirstFunName,
           FirstFunName(FirstFunName), SecondFunName(SecondFunName),
           FirstOutFile(FirstOutFile), SecondOutFile(SecondOutFile),
           CacheDir(CacheDir), OutputLlvmIR(OutputLlvmIR),
-          ControlFlowOnly(ControlFlowOnly), PrintAsmDiffs(PrintAsmDiffs),
+          PatternControlFlowOnly(ControlFlowOnly), PrintAsmDiffs(PrintAsmDiffs),
           PrintCallStacks(PrintCallStacks) {
     refreshFunctions();
 

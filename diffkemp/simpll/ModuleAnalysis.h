@@ -35,7 +35,7 @@ using namespace llvm;
 void preprocessModule(Module &Mod,
                       Function *Main,
                       GlobalVariable *Var,
-                      bool ControlFlowOnly);
+                      const Config &Config);
 
 /// Simplify two corresponding modules for the purpose of their subsequent
 /// semantic difference analysis. Tries to remove all the code that is

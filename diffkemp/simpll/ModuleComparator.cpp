@@ -54,7 +54,7 @@ void ModuleComparator::compareFunctions(Function *FirstFun,
         if (hasSuffix(SecondFunName))
             SecondFunName = dropSuffix(SecondFunName);
 
-        if (config.ControlFlowOnly) {
+        if (config.PatternControlFlowOnly) {
             // If checking control flow only, it suffices that one of the
             // functions is a declaration to treat them equal.
             if (FirstFunName == SecondFunName)
@@ -112,6 +112,8 @@ void ModuleComparator::compareFunctions(Function *FirstFun,
                         dbgs() << getDebugIndent()
                                << "Functions are not equal\n");
         ComparedFuns.at({FirstFun, SecondFun}).kind = Result::NOT_EQUAL;
+        if (!config.PatternFunctionSplits)
+            return;
         while (tryInline.first || tryInline.second) {
             DEBUG_WITH_TYPE(DEBUG_SIMPLL, increaseDebugIndentLevel());
 

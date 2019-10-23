@@ -64,12 +64,39 @@ class Config {
 
     // Save the simplified IR of the module to a file.
     bool OutputLlvmIR;
-    // Keep only control-flow related instructions
-    bool ControlFlowOnly;
     // Print raw differences in inline assembly.
     bool PrintAsmDiffs;
     // Show call stacks for non-equal functions
     bool PrintCallStacks;
+
+    // The following boolean variables specify which patterns of syntactic
+    // changes should be treated as semantically equal.
+
+    // Patterns that are known to be semantically equal (turned on by default):
+
+    // Changes in structure alignment
+    bool PatternStructAlignment = true;
+    // Splitting code into functions
+    bool PatternFunctionSplits = true;
+    // Changing unused return values to void
+    bool PatternUnusedReturnTypes = true;
+    // Changes in kernel-specific printing functions calls. These include:
+    // - changes in strings printed by kernel print functions
+    // - changes in arguments of kernel functions that are related to the call
+    //   call location (file name and line number)
+    // - changes in counter, date, time, file name, and line macros
+    bool PatternKernelPrints = true;
+    // Changes in dead code
+    bool PatternDeadCode = true;
+    // Changed numerical value of a macro
+    bool PatternNumericalMacros = true;
+
+    // Patterns that are not semantically equal (turned off by default):
+
+    // Changes in type casts
+    bool PatternTypeCasts = false;
+    // Ignore all changes except those in control-flow
+    bool PatternControlFlowOnly = false;
 
     // Constructor for command-line use.
     Config();
@@ -98,8 +125,8 @@ class Config {
             : First(nullptr), Second(nullptr), FirstFunName(FirstFunName),
               SecondFunName(SecondFunName), FirstOutFile("/dev/null"),
               SecondOutFile("/dev/null"), CacheDir(CacheDir),
-              ControlFlowOnly(ControlFlowOnly), PrintAsmDiffs(PrintAsmDiffs),
-              PrintCallStacks(PrintCallStacks) {}
+              PatternControlFlowOnly(ControlFlowOnly),
+              PrintAsmDiffs(PrintAsmDiffs), PrintCallStacks(PrintCallStacks) {}
 
     /// Sets debug types specified in the vector.
     void setDebugTypes(std::vector<std::string> &debugTypes);
