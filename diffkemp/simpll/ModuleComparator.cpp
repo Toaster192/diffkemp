@@ -108,6 +108,10 @@ void ModuleComparator::compareFunctions(Function *FirstFun,
     DifferentialFunctionComparator fComp(
             FirstFun, SecondFun, config, DI, &Patterns, this);
     int result = fComp.compare();
+    ComparedFuns.at({FirstFun, SecondFun}).First.linesCnt =
+            fComp.ComparedLinesL.size();
+    ComparedFuns.at({FirstFun, SecondFun}).Second.linesCnt =
+            fComp.ComparedLinesR.size();
 
     DEBUG_WITH_TYPE(DEBUG_SIMPLL, decreaseDebugIndentLevel());
     if (result == 0) {
@@ -163,6 +167,10 @@ void ModuleComparator::compareFunctions(Function *FirstFun,
             DifferentialFunctionComparator fCompSecond(
                     FirstFun, SecondFun, config, DI, &Patterns, this);
             result = fCompSecond.compare();
+            ComparedFuns.at({FirstFun, SecondFun}).First.linesCnt =
+                    fCompSecond.ComparedLinesL.size();
+            ComparedFuns.at({FirstFun, SecondFun}).Second.linesCnt =
+                    fCompSecond.ComparedLinesR.size();
 
             // If the functions are equal after the inlining and there is a
             // call to the inlined function, mark it as weak.

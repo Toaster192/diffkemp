@@ -55,13 +55,16 @@ class ComparisonGraph:
         Note: names, files and lines are tuples containing the values for both
         modules.
         """
-        def __init__(self, names, result, files=None, lines=None):
+
+        def __init__(self, names, result, files=None, lines=None,
+                     lines_cnt=None):
             self.names = names
             self.result = result
             self.nonfun_diffs = []
             self.successors = ([], [])
             self.files = files
             self.lines = lines
+            self.lines_cnt = lines_cnt
             # Vertices are by default cachable, but there are some cases when
             # it is necessary to run the comparison again.
             self.cachable = True
@@ -93,7 +96,9 @@ class ComparisonGraph:
                 (res_left["file"] if "file" in res_left else None,
                  res_right["file"] if "file" in res_right else None),
                 (res_left["line"] if "line" in res_left else None,
-                 res_right["line"] if "line" in res_right else None)
+                 res_right["line"] if "line" in res_right else None),
+                (res_left["lines-cnt"] if "lines-cnt" in res_left else 0,
+                 res_right["lines-cnt"] if "lines-cnt" in res_right else 0)
             )
             if "calls" in res_left:
                 for res, side in [(res_left,
@@ -149,6 +154,9 @@ class ComparisonGraph:
                 if len(other.successors[side]) > len(self.successors[side]):
                     return True
             return False
+
+        def compared_lines_cnt(self):
+            return self.lines_cnt[0] + self.lines_cnt[1]
 
     class Edge:
         """

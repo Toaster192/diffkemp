@@ -155,6 +155,8 @@ class Result:
 
         # Generate counts
         compared = len(self.graph.vertices)
+        compared_lines = sum([v.compared_lines_cnt() for v in
+                              self.graph.vertices.values()])
         total = len(unique_diffs)
         functions = len([r for r in unique_diffs
                          if r.res.first.diff_kind == "function"])
@@ -173,6 +175,7 @@ class Result:
             print("Elapsed time:            {:.2f} s".format(
                 self.stop_time - self.start_time))
         print("Functions compared:      {}".format(compared))
+        print("Lines compared:          {}".format(compared_lines))
         print("Total differences:       {}".format(total))
         if total == 0:
             return

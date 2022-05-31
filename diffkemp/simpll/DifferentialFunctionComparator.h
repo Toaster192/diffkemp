@@ -56,6 +56,9 @@ class DifferentialFunctionComparator : public FunctionComparator {
     mutable std::pair<const Instruction *, const Instruction *>
             DifferingInstructions;
 
+    mutable std::set<std::pair<std::string, unsigned>> ComparedLinesL;
+    mutable std::set<std::pair<std::string, unsigned>> ComparedLinesR;
+
   protected:
     /// Specific comparison of GEP instructions/operators.
     /// Handles situation when there is an offset between matching GEP indices

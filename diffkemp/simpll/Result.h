@@ -49,6 +49,7 @@ struct FunctionInfo {
     std::string name;
     std::string file;
     int line;
+    unsigned linesCnt = 0;
     std::set<CallInfo> calls;
 
     // Default constructor is needed for YAML serialisation so that the struct

@@ -45,6 +45,7 @@ template <> struct MappingTraits<FunctionInfo> {
         io.mapRequired("function", name);
         io.mapOptional("file", info.file);
         io.mapOptional("line", info.line, 0);
+        io.mapOptional("lines-cnt", info.linesCnt, 0);
         auto calls =
                 std::vector<CallInfo>(info.calls.begin(), info.calls.end());
         io.mapOptional("calls", calls);
